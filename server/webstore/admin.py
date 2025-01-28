@@ -8,7 +8,8 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'items', 'total_cost']
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'cart', 'status', 'code']
+    list_display = ['id', 'cart', 'status', 'code', 'status']
+    # readonly_fields = ['code']
 
 class PaymentAdmin(admin.ModelAdmin):
     list_display = ['id', 'order', 'user', 'amount', 'refrence_id', 'status', 'time']

@@ -75,24 +75,25 @@ class Cart(models.Model):
 
 
 class Order(models.Model):
-    class status(models.TextChoices):
+    class state(models.TextChoices):
         PROCESSING = 'processing'
         COMPLETED = 'completed'
         CANCELLED = 'cancelled'
     id = models.AutoField(primary_key=True)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    code = models.CharField(max_length=50)
+    status = models.CharField(max_length=50, choices=state.choices, default=state.PROCESSING)
+    code = models.CharField(max_length=50, blank=True, null=True)
 
     def self(self, *args, **kwargs):
         if not self.code:
-            self.code = self.generate_unique_code()
+            self.code = generate_unique_code()
         super().save(*args, **kwargs)
 
-    def generate_unique_code(self):
-        while True:
-            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-            if not Order.objects.filter(code=code).exists():
-                return code
+def generate_unique_code():
+    while True:
+        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+        if not Order.objects.filter(code=code).exists():
+            return code
     
 
 
