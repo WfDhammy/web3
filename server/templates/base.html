@@ -18,7 +18,12 @@
         <nav
             class="relative max-w-[85rem] w-full bg-white border border-gray-200 rounded-[2rem] mx-2 py-2.5 px-4 md:flex md:items-center md:justify-between md:py-0 md:px-6 lg:px-8 xl:mx-auto">
             <div class="flex items-center justify-between">
-                <h1 class="font-bold text-lg">Outside</h1>
+                {% if user.is_authenticated %}
+                <h1 class="font-bold text-lg"> {{ user.username }} </h1>
+                <a class="text-lg" href="{% url 'logout'  %}">Logout</a>
+                    {% else %}
+                    <h1 class="font-bold text-lg"> <a href="{% url 'signup' %}">Login</a> </h1>
+                {% endif %}
                 <div class="md:hidden">
                     <button type="button"
                         class="p-2 inline-flex justify-center items-center gap-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
@@ -53,7 +58,7 @@
             <nav class="flex md:flex-col px-4 py-2 md:py-4 md:space-y-2">
                 <div class="flex-1 md:flex-none">
                     <h2 class="hidden md:block text-xs uppercase font-semibold text-gray-500 tracking-wide mb-2">
-                        Dashboard</h2>
+                        Dashboard</h2>  
                     <div class="flex md:flex-col justify-around md:space-y-2">
                         <a href="#"
                             class="flex flex-col md:flex-row items-center px-2 md:px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">
