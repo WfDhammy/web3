@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from .models import Product, Payment, Category, CartItem, Cart, Brand
+from .models import Product, Category, Cart, Brand
 from django.contrib.auth.models import User
 
 
@@ -52,3 +52,12 @@ def login_user(request):
         return render(request, 'login.html')
     return render(request, 'login.html')
                              
+def addtocart(request, product_id, user_id):
+    product = get_object_or_404(Product, id=product_id)
+    user = get_object_or_404(User, id=user_id)
+    if user.is_authenticated:
+        cart = Cart.objects.create(product=product, user=user)
+        cart.save()
+        return redirect('landing')
+    # return render(request, 'index.html'
+

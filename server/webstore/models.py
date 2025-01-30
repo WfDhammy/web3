@@ -43,75 +43,56 @@ class Product(models.Model):
         return self.name
     
 
-class CartItem(models.Model):
-    id = models.AutoField(primary_key=True)
-    Product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
-    
-
-    @property
-    def cost(self):
-        return self.Product.price * self.quantity
-    
-    def __str__(self):
-        return f"{self.Product.name} x {self.quantity}"
-
-    
-
 class Cart(models.Model):
     id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    items = models.ForeignKey(CartItem, on_delete=models.CASCADE)
-    
-
-
-    @property
-    def total_cost(self):
-        return sum(item.cost for item in self.items.all())
-    
-    def __str__(self):
-        return self.user.username
-    
-
-
-class Order(models.Model):
-    class state(models.TextChoices):
-        PROCESSING = 'processing'
-        COMPLETED = 'completed'
-        CANCELLED = 'cancelled'
-    id = models.AutoField(primary_key=True)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    status = models.CharField(max_length=50, choices=state.choices, default=state.PROCESSING)
-    code = models.CharField(max_length=50, blank=True, null=True)
-
-    def self(self, *args, **kwargs):
-        if not self.code:
-            self.code = generate_unique_code()
-        super().save(*args, **kwargs)
-
-def generate_unique_code():
-    while True:
-        code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-        if not Order.objects.filter(code=code).exists():
-            return code
-    
-
-
-class Payment(models.Model):
-    id = models.AutoField(primary_key=True)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    cost = models.CharField(max_length=11)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    refrence_id = models.CharField(max_length=12, unique=True)
-    status = models.CharField(max_length=20, default="processing")
-    time = models.DateTimeField(auto_now_add=True)
 
 
     def save(self, *args, **kwargs):
-        if self.order:
-            self.amount = self.order.cart.total_cost
-            self.user = self.order.cart.user 
+        if self.product:
+            self.cost = self.product.price * self.quantity
         super().save(*args, **kwargs)
+
+
+# class Order(models.Model):
+#     class state(models.TextChoices):
+#         PROCESSING = 'processing'
+#         COMPLETED = 'completed'
+#         CANCELLED = 'cancelled'
+#     id = models.AutoField(primary_key=True)
+#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+#     status = models.CharField(max_length=50, choices=state.choices, default=state.PROCESSING)
+#     code = models.CharField(max_length=50, blank=True, null=True)
+
+#     def self(self, *args, **kwargs):
+#         if not self.code:
+#             self.code = generate_unique_code()
+#         super().save(*args, **kwargs)
+
+# def generate_unique_code():
+#     while True:
+#         code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+#         if not Order.objects.filter(code=code).exists():
+#             return code
+    
+# class Payment(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     refrence_id = models.CharField(max_length=12, unique=True)
+#     status = models.CharField(max_length=20, default="processing")
+#     time = models.DateTimeField(auto_now_add=True)
+
+
+#     def save(self, *args, **kwargs):
+#         if self.order:
+#             self.amount = self.order.cart.total_cost
+#             self.user = self.order.cart.user 
+#         super().save(*args, **kwargs)
 
 
 

@@ -1,11 +1,9 @@
 from django.contrib import admin
-from .models import Category, Brand, Product, CartItem, Cart, Order, Payment
-
-class CartItemAdmin(admin.ModelAdmin):
-    list_display = ['Product', 'quantity', 'cost']
+from .models import Category, Brand, Product, Cart
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ['id', 'user', 'items', 'total_cost']
+    list_display = ['id', 'user', 'product', 'quantity', 'cost']
+    list_filter = ['user', 'product']
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ['id', 'cart', 'status', 'code', 'status']
@@ -27,10 +25,9 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('id', 'uploaded_at' )
 
 
-admin.site.register( Payment, PaymentAdmin)
-admin.site.register(Order, OrderAdmin)
+# admin.site.register( Payment, PaymentAdmin)
+# admin.site.register(Order, OrderAdmin)
 admin.site.register(Cart, CartAdmin)
-admin.site.register(CartItem, CartItemAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Brand, BrandAdmin)
 admin.site.register(Product, ProductAdmin)
